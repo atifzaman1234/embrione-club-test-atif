@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router';
 import Navbar from './components/Navbar';
 import Teams from './teams';
+import { Register } from './register';
 
 export default function App() {
   return (
@@ -11,6 +12,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Navigate to="/team" replace />} />
             <Route path="/team" element={<Teams />} />
+            <Route path="/register" element={<Register />} />
           </Routes>
         </main>
       </div>

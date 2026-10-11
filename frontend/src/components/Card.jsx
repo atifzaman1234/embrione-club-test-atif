@@ -6,7 +6,7 @@ export default function Card({
     domain = 'General',
     memberId = '',
     bio = 'No bio available yet.',
-    imageUrl = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80',
+    imageUrl = null,
     imageAlt,
     isOnline = true,
     organization = 'The Embrione',
@@ -23,11 +23,19 @@ export default function Card({
                 {/* Top Header: Photo & Member Details */}
                 <div className="flex items-center gap-4">
                     <div className="relative">
-                        <img
-                            src={imageUrl}
-                            alt={imageAlt || `${name} profile`}
-                            className="h-16 w-16 rounded-full object-cover border-2 border-slate-700 transition-colors duration-300 group-hover:border-cyan-400"
-                        />
+                        {imageUrl ? (
+                            <img
+                                src={imageUrl}
+                                alt={imageAlt || `${name} profile`}
+                                className="h-16 w-16 rounded-full border-2 border-slate-700 object-cover transition-colors duration-300 group-hover:border-cyan-400"
+                            />
+                        ) : (
+                            <div className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-slate-700 bg-slate-800 text-slate-400 transition-colors duration-300 group-hover:border-cyan-400 group-hover:text-cyan-300">
+                                <svg viewBox="0 0 24 24" aria-label="Default user avatar" className="h-9 w-9 fill-current">
+                                    <path d="M12 12a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm0 2.25c-4.14 0-7.5 2.52-7.5 5.625 0 .62.505 1.125 1.125 1.125h12.75c.62 0 1.125-.505 1.125-1.125 0-3.105-3.36-5.625-7.5-5.625Z" />
+                                </svg>
+                            </div>
+                        )}
                         {isOnline && <span className="absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full border-2 border-slate-900 bg-emerald-500" />}
                     </div>
 

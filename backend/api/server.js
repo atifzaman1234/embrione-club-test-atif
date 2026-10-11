@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
-const supabase = require('./supabase');
+const supabase = require('../supabase');
 
 const app = express();
 const port = process.env.PORT || 3000;

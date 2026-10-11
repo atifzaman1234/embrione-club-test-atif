@@ -1,9 +1,9 @@
 export default function Card({
-    name = 'Team Member',
-    role = 'Member',
+    name = '',
+    role = '',
     department = '',
     semester = '',
-    domain = 'General',
+    domain = '',
     memberId = '',
     bio = 'No bio available yet.',
     imageUrl = null,

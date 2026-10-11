@@ -16,6 +16,8 @@ export function Register() {
     const [imageUrl, setImageUrl] = useState(null);
     const [imageError, setImageError] = useState('');
     const [isConverting, setIsConverting] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState('');
     const update = ({ target: { name, value } }) => { setProfile((current) => ({ ...current, [name]: value })); setSubmitted(false); };
     const updateImage = async ({ target }) => {
         const file = target.files?.[0];
@@ -43,13 +45,40 @@ export function Register() {
         }
     };
 
-    const submit = (event) => {
+    const submit = async (event) => {
         event.preventDefault();
         if (!convertedImage) {
             setImageError('Choose a profile image before submitting.');
             return;
         }
-        setSubmitted(true);
+        setIsSubmitting(true);
+        setSubmitError('');
+        setSubmitted(false);
+
+        const formData = new FormData();
+        formData.append('name', profile.name);
+        formData.append('email', profile.email);
+        formData.append('srn', profile.memberId);
+        formData.append('position', profile.role);
+        formData.append('domain', profile.domain);
+        formData.append('branch', profile.department);
+        formData.append('semester', profile.semester);
+        formData.append('bio', profile.bio);
+        formData.append('github_url', profile.githubUrl);
+        formData.append('linkedin_url', profile.linkedinUrl);
+        formData.append('photo', convertedImage);
+
+        try {
+            const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+            const response = await fetch(`${apiBaseUrl}/api/members`, { method: 'POST', body: formData });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.error || 'Unable to submit your profile.');
+            setSubmitted(true);
+        } catch (error) {
+            setSubmitError(error.message || 'Unable to submit your profile.');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -102,8 +131,9 @@ export function Register() {
                             </fieldset>
                         </div>
 
-                        <div className="mt-8 flex flex-col-reverse gap-3 border-t border-slate-800 pt-6 sm:flex-row sm:items-center sm:justify-between"><p className="text-xs text-slate-500">You can edit these details later.</p><button disabled={isConverting} type="submit" className="rounded-xl bg-cyan-400 px-5 py-3 text-sm font-bold text-slate-950 transition hover:bg-cyan-300 focus:outline-none focus:ring-4 focus:ring-cyan-400/30 disabled:cursor-not-allowed disabled:opacity-60">{isConverting ? 'Converting image…' : 'Submit profile'}</button></div>
-                        {submitted && <p role="status" className="mt-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300">Your WebP profile image is ready to upload for review.</p>}
+                        <div className="mt-8 flex flex-col-reverse gap-3 border-t border-slate-800 pt-6 sm:flex-row sm:items-center sm:justify-between"><p className="text-xs text-slate-500">You can edit these details later.</p><button disabled={isConverting || isSubmitting} type="submit" className="rounded-xl bg-cyan-400 px-5 py-3 text-sm font-bold text-slate-950 transition hover:bg-cyan-300 focus:outline-none focus:ring-4 focus:ring-cyan-400/30 disabled:cursor-not-allowed disabled:opacity-60">{isConverting ? 'Converting image…' : isSubmitting ? 'Submitting profile…' : 'Submit profile'}</button></div>
+                        {submitted && <p role="status" className="mt-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300">Profile submitted successfully and is pending review.</p>}
+                        {submitError && <p role="alert" className="mt-4 rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-300">{submitError}</p>}
                     </form>
 
                     <aside className="lg:sticky lg:top-24"><div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-5 backdrop-blur sm:p-6">
